@@ -4,12 +4,15 @@ import { CiEdit } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi";
 import Create from "./components/Create";
 import Delete from "./components/Delete";
+import Update from "./components/Update";
 function App() {
   const [classData, setClassData] = useState([]);
   const [singleClassData, setSingleClassData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [addNewModal, setAddNewModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [updateModal, setUpdateModal] = useState(false);
+  const [id, setId] = useState();
 
   async function getClassData() {
     const response = await fetch("http://localhost:5000/classes");
@@ -40,6 +43,21 @@ function App() {
     console.log(jsonData);
     setSingleClassData(jsonData);
   }
+  async function handleUpdate(id) {
+    setUpdateModal(true);
+    // console.log(id);
+    const response = await fetch(`http://localhost:5000/classes/${id}`, {
+      method: "GET",
+    });
+    const jsonData = await response.json();
+    // getAllData();
+    console.log(jsonData);
+    setSingleClassData(jsonData);
+
+    console.log(id);
+    // getAllData();
+    setId(id);
+  }
 
   return (
     <>
@@ -51,6 +69,7 @@ function App() {
         />
       )}
       {addNewModal && <Create setAddNewModal={setAddNewModal} />}
+      {updateModal && <Update setAddNewModal={setAddNewModal} id={id}/>}
       <div className="overflow-x-auto w-3/4 m-auto mt-14 ">
         <div className="flex item-center justify-end mb-2">
           <button
@@ -92,7 +111,10 @@ function App() {
                     {item.department_name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex text-center justify-center">
-                    <button className="text-blue-500 hover:text-blue-900 text-2xl mr-4">
+                    <button
+                      className="text-blue-500 hover:text-blue-900 text-2xl mr-4"
+                      onClick={() => handleUpdate(item.class_id)}
+                    >
                       <CiEdit />
                     </button>
                     <button
